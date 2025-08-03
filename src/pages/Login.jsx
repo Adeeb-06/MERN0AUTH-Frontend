@@ -83,12 +83,13 @@ export default function LoginForm() {
 
             {/* Forgot Password Link */}
             <div className="flex justify-end">
-              <a
-                href="#"
+              <Link
+                to="/forgot-password"
+                href="/forgot-password"
                 className="text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors hover:underline"
               >
                 Forgot your password?
-              </a>
+              </Link>
             </div>
 
             {/* Login Button */}
