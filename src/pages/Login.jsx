@@ -1,25 +1,40 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AppContent } from '../context/AppContext';
 import axios from 'axios';
 
+
 export default function LoginForm() {
+
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const { backendUrl , setIsLoggedIn , setUserData } = React.useContext(AppContent);
+  const { backendUrl , setIsLoggedIn , isLoggedIn, getUserData } = useContext(AppContent);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+   const { data } = await axios.post(`${backendUrl}/api/auth/login`, {
+      email,
+      password
+    }, {withCredentials:true});
 
-    const {data} = await axios.post(`${backendUrl}/login`, {
-      
-    })
+    if (data.success) {
+      setIsLoggedIn(true);
+      // setUserData(data.user);
+      getUserData();
+      navigate('/profile');
+    } else {
+      toast.error(data.message || "Registration failed");
+    }
+
 
   };
+
+  console.log(isLoggedIn)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center p-4">
@@ -104,17 +119,8 @@ export default function LoginForm() {
               className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold py-4 px-6 rounded-2xl hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none group"
             >
               <div className="flex items-center justify-center space-x-2">
-                {isLoading ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>Signing in...</span>
-                  </>
-                ) : (
-                  <>
                     <span>Sign In</span>
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />
-                  </>
-                )}
               </div>
             </button>
 
